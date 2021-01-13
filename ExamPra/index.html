@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.staticfile.org/react/16.4.0/umd/react.development.js"></script>
+    <script src="https://cdn.staticfile.org/react-dom/16.4.0/umd/react-dom.development.js"></script>
+    <script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.min.js"></script>
+    <link rel="stylesheet" href="css/index.css">
+
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+
+
+
+
+</head>
+
+<body style="background-color: #F0F1F6;">
+    <div id="textMain">
+
+        <div id="main"></div>
+
+    </div>
+
+    <script type="text/babel">
+        class Button extends React.Component {
+            render() {
+                return (
+                    < button className={this.props.classname} onClick={() => this.props.onClick()}>{this.props.value}</button >
+                )
+            }
+        }
+        class PreviewInputRadio extends React.Component {
+            render() {
+                return (
+                    <tr className="bg1">
+                        <td ><input type="radio" name="question-single-choice" checked={this.props.selectedClass==true?"checked":""  } readOnly /></td>
+                        <td className="input-text"><input className="border enter fontsize-input" type="text" placeholder="Enter choice value"  value={this.props.value} readOnly /></td>
+                        <td className="correct">
+                            <span type="radio" className={this.props.selectedClass == false ? 'spanradio demoSpan1 spanbg1' : 'spanradio demoSpan1 spanbg2'} style={{ cursor: "pointer" }} ></span>
+                        </td>
+                    </tr >
+
+                );
+            }
+        }
+        class Preview extends React.Component {
+            constructor(props) {
+                super(props)
+                this.state = {
+                    comps: [{ id: 0, selectedClass: false }, { id: 1, selectedClass: false }, { id: 2, selectedClass: false }, { id: 3, selectedClass: false }],
+                    click: 0
+                }
+            }
+            componentWillMount(){
+                const comps = this.state.comps.slice();
+                var i =this.props.tAb.bt;
+                comps[i].selectedClass = true;
+                this.setState({ comps: comps });
+            }
+            render() { 
+                var { comps } = this.state;
+                
+                return (
+                    <div className="whole border">
+                        <div >
+                            <div className="title-template">          
+                        &nbsp;&nbsp;Question 
+                               
+                            </div>
+
+                        </div><hr className="border" />
+                        <div className="panel">
+                            <div className="question">
+                                <textarea className="border fontsize-input" id="question_enter" cols="30" rows="10" placeholder="Enter question content">
+                                    {this.props.tAb.textareaValue}</textarea>
+                                <table>
+                                    <tbody id="">
+
+                                        {comps.map((comp, index) => {
+                                            return <PreviewInputRadio key={index} selectedClass={this.state.comps[index].selectedClass} value={this.props.tAb.radioInput[index]}  />
+                                        })} 
+                                    </tbody>
+                                </table>
+                                <div style={{textAlign:"right" ,fontSize:"13px"}}>Correct answer</div>
+                            </div>
+                        </div>
+                    </div >
+                )
+            }
+        }
+        
+        class Footer extends React.Component {
+            constructor(props) {
+                super(props)
+                this.state = {
+                    comps: [{ id: 0, value: "Cannel", classname: "btn btn-outline-secondary" }, { id: 1, value: "Preview", classname: "btn btn-outline-secondary" },
+                    { id: 2, value: "Save as draft", classname: "btn btn-outline-secondary" }, { id: 3, value: "Complete", classname: "btn btn-info" }],
+                    models: [{ id: 0 }],
+                    previewOnclick: false,
+                    buttonValue:'',
+                    textareaAndbutton:{ bt:3,textareaValue:'1231' ,radioInput:['a','b','c','d']}
+                }
+            }
+            handleUpdateData(textareaAndbutton){
+                this.setState({
+                   textareaAndbutton : textareaAndbutton
+                })
+                console.log("textareaAndbutton.textareaValue"+textareaAndbutton.textareaValue);
+                console.log("this.state.textareaAndbutton.textareaValue"+this.state.textareaAndbutton.textareaValue);
+            } 
+           
+            //textareaAndbutton:{bt: 0, textareaValue:'',radioInput:['a','b','c','d']},
+            handleClick(value) {
+                const previewOnclick=this.state.previewOnclick;
+                switch (value) {
+                    case "Cannel":
+                        break;
+                    case "Preview":
+                        this.setState({ previewOnclick:  !previewOnclick,buttonValue : value})
+                        break;
+                    case "Save as draft":
+                        break;
+                    case "Complete":
+                        break;
+                       default:
+                        break;
+                }
+            }
+            render() {
+                const comps = this.state.comps.slice();
+                const models = this.state.models.slice();
+                const textareaAndbutton = this.state.textareaAndbutton;
+                if (this.state.previewOnclick){
+                    return (
+                    <div>
+                        {models.map((model, index) => {
+                                return <Preview key={index}  tAb={textareaAndbutton}/>
+                            })}
+                            <div className="footerButton">
+                                {models.map((model, index) => {
+                                    return <Button key={index} value="Exit" classname="btn btn-info" onClick={() => this.handleClick(this.state.buttonValue)} />
+                                })}
+                            </div>
+                </div>)
+                }else{
+                    return(<div>
+                            <div className="footerButton">
+                                {comps.map((comp, index) => {
+                                    return <Button key={index} value={comp.value} classname={comp.classname} onClick={() => this.handleClick(comp.value)} />
+                                })}
+                            </div>,
+                            {models.map((model, index) => {
+                                return <AddQueations key={index} id={index + 1} handleUpdateData={(textareaAndbutton) => () => this.handleUpdateData(textareaAndbutton)} />
+                            }) }
+                            
+                            </div>
+                    )
+                }
+            }
+        }
+        
+        class AddQueations extends React.Component {
+            constructor(props) {
+                super(props)
+                this.state = {
+                    comps: [{ id: 0 }],
+                    count: 0,
+                    droplinkValues:["Choice","Essay","Fill-in-the-blank","Sub-question","File upload","Hot spot","Image labeling","Matching","Media","Ordering"]
+                }
+            }
+            onClickDrop(droplinkValue){
+                
+                var { comps } = this.state;
+                var count = this.state.count;
+                this.setState({ comps: comps.concat([Date.now()]), count: count++ })
+            }  
+            
+            removeTimeItem(index) {
+                let arr = this.state.comps.slice();
+                arr.splice(index, 1);
+                this.setState({ comps: arr })
+            }            
+            /*<input className="imgicon add" id="addsection" type="image" src="img/add.png" onClick={
+                            () => this.setState({ comps: comps.concat([Date.now()]), count: count++ })
+
+                        } />Add Section*/
+            render() {
+                var { comps } = this.state;
+                var count = this.state.count;
+                let droplinkValues = this.state.droplinkValues.slice();
+                return (
+                    <div>
+                        {comps.map((comp, index) => {
+                            return <Model key={index} id={index} onClickRemove={() => this.removeTimeItem()} handleUpdateData={(textareaAndbutton) => this.props.handleUpdateData(textareaAndbutton)}/>
+                        })}
+                        <div id="footer" className="whole bg2">
+                            <div className="dropdown">
+                                <button className=" btn btn-secondary dropdown-toggle button-add-question" type="button" id="dropdownMenuButton" data-toggle="dropdown">
+                                    <input className="imgicon add bg2 input-add" id="addsection" type="image" src="img/add.png" /><span style={{ position: "absolute" }}>Add new question</span>
+                                </button>
+                                <div className="dropdown-menu content" >
+                                    
+                                    {droplinkValues.map((droplinkValue) => {
+                                        return <DropTable value={droplinkValue} key={droplinkValue.toString()}  onClickDrop={
+                                        () => this.onClickDrop(droplinkValue)} />
+                                    }
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+        }
+        
+        class DropTable extends React.Component {
+            render(){
+                return(
+                    <button className="dropdown-item" onClick={()=>this.props.onClickDrop()}>{this.props.value}</button>
+                )
+            }
+        }
+        
+        class InputRadio extends React.Component {
+            constructor(props) {
+                super(props)
+                this.handleInputareaChange = this.handleInputareaChange.bind(this);
+            }
+            handleInputareaChange(e){
+                this.props.handleInputareaChange(e.target.value);
+            }
+            render() {
+                return (
+                    <tr className="bg1">
+                        <td ><input type="radio" name="question-single-choice" /></td>
+                        <td className="input-text"><input className="border enter fontsize-input" type="text" placeholder="Enter choice value" onChange={this.handleInputareaChange} /></td>
+                        <td ><a ><img className="imgicon bg1" src="img/delete.png" alt="" onClick={() => this.props.onClickDelete()} /></a></td>
+                        <td className="correct">
+                            <span type="radio" className={this.props.selectedClass == false ? 'spanradio demoSpan1 spanbg1' : 'spanradio demoSpan1 spanbg2'} style={{ cursor: "pointer" }} onClick={() => this.props.onClickCorrect()}></span>
+                        </td>
+                    </tr >
+
+                );
+            }
+        }
+        class Model extends React.Component {
+            constructor(props) {
+                super(props)
+                this.state = {
+                    comps: [{ id: 0, selectedClass: false }, { id: 1, selectedClass: false }, { id: 2, selectedClass: false }, { id: 3, selectedClass: false }],
+                    textareaAndbutton:{bt: 0, textareaValue:'',radioInput:['a','b','c','d']},
+                    click:0             
+                }
+                this.handleTextareaChange = this.handleTextareaChange.bind(this);
+                this.handleInputareaChange = this.handleInputareaChange.bind(this);
+            }
+            removeTimeItem(index) {
+                let arr = this.state.comps.slice();
+                arr.splice(index, 1);
+                this.setState({ comps: arr })
+                /*const { data } = this.state;
+                let arr = [...data];
+                arr.splice(index, 1)
+                this.setState({ comps: [...arr] });*/
+            }
+            //对点击的按钮进行记录
+            handleClick(i) {
+                //console.log("unhandleclick:" + this.state.click);
+                const comps = this.state.comps.slice();
+                const loc = this.state.click;
+                comps[loc].selectedClass = false;
+                //this.setState({ click: i ,comps:comps});
+
+                comps[i].selectedClass = !this.state.comps[i].selectedClass;
+
+                const textareaAndbutton=this.state.textareaAndbutton;
+                textareaAndbutton.bt=i;
+                this.setState({click: i , comps: comps , textareaAndbutton: textareaAndbutton });
+                //console.log("handleclick:" +this.state.textareaAndbutton.bt);
+            }
+            //对四个输入选项进行记录
+            handleInputareaChange(inputarea,index){
+                var i=index;
+                console.log(inputarea);
+                const textareaAndbutton=this.state.textareaAndbutton;
+                textareaAndbutton.radioInput[i]=inputarea
+                this.setState({
+                    textareaAndbutton :textareaAndbutton
+                })
+               
+            }
+                    
+            handleTextareaChange(e){
+                //alert(e.target.value)
+                const textareaAndbutton=this.state.textareaAndbutton;
+                textareaAndbutton.textareaValue = e.target.value
+                this.setState({
+                    textareaAndbutton:textareaAndbutton
+                })
+            }
+            render() {
+                
+                var textareaAndbutton=this.state.textareaAndbutton;
+                this.props.handleUpdateData(textareaAndbutton);
+                
+                var  comps  = this.state.comps.slice();
+
+                var t = [{ id: 0, selectedClass: false }]
+                var id = 1
+                id += this.props.id == null ? 0 : this.props.id;
+                var s = Array(id - 1).fill(null)
+                //squares: Array(9).fill(null),
+                // console.log(this.props.id)
+
+                return (
+                    <div className="whole border">
+                        <div >
+                            <div className="title-template">
+                                <select name="" id="">
+                                    <option value="1">1</option>
+                                    {s.map((s, index) => {
+                                        return <option key={index} selected="selected">{index + 2}</option>
+                                    })}
+                                </select>
+                        &nbsp;&nbsp;Question {id}
+                                <div className="setting_delete">
+                                    <input className="imgicon" type="image" src="img/setting.png" />
+                                    <input className="imgicon" type="image" src="img/delete.png" onClick={() => this.props.onClickRemove()} />
+                                </div>
+                            </div>
+
+                        </div><hr className="border" />
+                        <div className="panel">
+                            <div className="question">
+                                <textarea className="border fontsize-input" id="question_enter" cols="30" rows="10" value={this.state.textareaValue}
+                                placeholder="Enter question content" onChange={this.handleTextareaChange}></textarea>
+                                <table>
+                                    <tbody id="">
+                                        {comps.map((comp, index) => {
+                                            return <InputRadio key={index} selectedClass={this.state.comps[index].selectedClass} 
+                                            onClickCorrect={() => this.handleClick(index)} onClickDelete={() => this.removeTimeItem(index)} value=""
+                                             handleInputareaChange={ (inputarea) => this.handleInputareaChange(inputarea,index)}/>
+                                        })}
+                                        <tr className="addfooter fontsize-input"><td><label htmlFor={this.props.id + "-addsection-btn"}>
+                                            <input className="imgicon add input-add" id={this.props.id + "-addsection-btn"} type="image" src="img/add.png" onClick={
+                                                () => this.setState({ comps: comps.concat(t) })
+                                            } /> <span style={{ position: "absolute" }}>Add choice</span></label>
+                                        </td></tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                            <div className="question_mark">
+                                <div>
+                                    Marks
+                            <input className="border" type="text" />
+                                </div>
+
+                            </div>
+                        </div>
+                    </div >
+
+                )
+
+            }
+        }
+        
+        ReactDOM.render(
+            <Footer />,
+
+            document.getElementById('main'),
+        );
+    </script>
+
+    <script>
+        function fun(event) {
+            //alert("123")
+            var s = document.getElementsByName("s");
+            for (var i = 0; i < s.length; i++) {
+                s[i].className = "spanradio demoSpan1 spanbg1 ";
+            }
+            var obj = event.srcElement;  //event在ie中自带有，可以不用传入，其他少数浏览器需要传入
+
+            obj.className = "demoSpan1 spanbg2 spanradio";
+            alert(obj.className);
+            //alert(obj.innerHTML);
+        }
+    </script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
+        integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+        crossorigin="anonymous"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+
+</body>
+
+</html>
+<!---
+/*class List extends React.Component {
+    constructor(props) {
+        super(props)
+        console.log(props)
+    }
+    render() {
+        return (
+            // for (let index = 0; index < 3; index++) {
+
+
+            // }
+
+            <tr>
+                <td><input type="radio" name="question-single-choice" /></td>
+                <td><input type="text" placeholder="Enter choice value" /></td>
+                <td><button></button></td>
+                <td><input type="radio" name="correct-single-choice" /></td>
+            </tr>
+        );
+    }
+}
+
+
+function add(todos) {
+    // console.log(document.getElementById('Answer'))
+    console.log(todos)
+    for (let index = 0; index < array.length; index++) {
+        const element = array[index];
+
+    }
+
+};*/-->
