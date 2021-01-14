@@ -9,20 +9,12 @@
     <script src="https://cdn.staticfile.org/react-dom/16.4.0/umd/react-dom.development.js"></script>
     <script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.min.js"></script>
     <link rel="stylesheet" href="css/index.css">
-
-
     <link rel="stylesheet" href="css/bootstrap.min.css">
-
-
-
-
 </head>
 
 <body style="background-color: #F0F1F6;">
     <div id="textMain">
-
         <div id="main"></div>
-
     </div>
 
     <script type="text/babel">
@@ -92,13 +84,20 @@
                 )
             }
         }
-        
+        window._={
+                setStore:(name,content) => {window.localStorage.setItem(name,content)},
+                getStore:(name) => {
+                    return window.localStorage.getItem(name);
+                }
+            }
         class Footer extends React.Component {
             constructor(props) {
                 super(props)
                 this.state = {
-                    comps: [{ id: 0, value: "Cannel", classname: "btn btn-outline-secondary" }, { id: 1, value: "Preview", classname: "btn btn-outline-secondary" },
-                    { id: 2, value: "Save as draft", classname: "btn btn-outline-secondary" }, { id: 3, value: "Complete", classname: "btn btn-info" }],
+                    comps: [
+                        { id: 0, value: "Cannel", classname: "btn btn-outline-secondary" }, { id: 1, value: "Preview", classname: "btn btn-outline-secondary" },
+                        { id: 2, value: "Save as draft", classname: "btn btn-outline-secondary" }, { id: 3, value: "Complete", classname: "btn btn-info" }
+                    ],
                     models: [{ id: 0 }],
                     previewOnclick: false,
                     buttonValue:'',
@@ -106,11 +105,16 @@
                 }
             }
             handleUpdateData(textareaAndbutton){
-                this.setState({
+                /*this.setState({
                    textareaAndbutton : textareaAndbutton
-                })
+                })*/
+                window.localStorage.setItem("a",textareaAndbutton);
+                var a = window.localStorage.getItem("a");
+                //window._.setStore("a",textareaAndbutton);
+                //var  a =window._.getStore("a");
+                console.log("a.textareaValue"+a.textareaValue);
                 console.log("textareaAndbutton.textareaValue"+textareaAndbutton.textareaValue);
-                console.log("this.state.textareaAndbutton.textareaValue"+this.state.textareaAndbutton.textareaValue);
+                console.log("textareaAndbutton.textareaValue"+a.bt);
             } 
            
             //textareaAndbutton:{bt: 0, textareaValue:'',radioInput:['a','b','c','d']},
@@ -137,9 +141,11 @@
                 if (this.state.previewOnclick){
                     return (
                     <div>
-                        {models.map((model, index) => {
+                        {
+                            models.map((model, index) => {
                                 return <Preview key={index}  tAb={textareaAndbutton}/>
-                            })}
+                            })
+                        }
                             <div className="footerButton">
                                 {models.map((model, index) => {
                                     return <Button key={index} value="Exit" classname="btn btn-info" onClick={() => this.handleClick(this.state.buttonValue)} />
@@ -154,7 +160,7 @@
                                 })}
                             </div>,
                             {models.map((model, index) => {
-                                return <AddQueations key={index} id={index + 1} handleUpdateData={(textareaAndbutton) => () => this.handleUpdateData(textareaAndbutton)} />
+                                return <AddQueations key={index} id={index + 1} handleUpdateData={(textareaAndbutton) => this.handleUpdateData(textareaAndbutton)} />
                             }) }
                             
                             </div>
@@ -266,6 +272,7 @@
                 let arr = [...data];
                 arr.splice(index, 1)
                 this.setState({ comps: [...arr] });*/
+                this.props.handleUpdateData(textareaAndbutton);
             }
             //对点击的按钮进行记录
             handleClick(i) {
@@ -281,6 +288,7 @@
                 textareaAndbutton.bt=i;
                 this.setState({click: i , comps: comps , textareaAndbutton: textareaAndbutton });
                 //console.log("handleclick:" +this.state.textareaAndbutton.bt);
+                this.props.handleUpdateData(textareaAndbutton);
             }
             //对四个输入选项进行记录
             handleInputareaChange(inputarea,index){
@@ -291,7 +299,7 @@
                 this.setState({
                     textareaAndbutton :textareaAndbutton
                 })
-               
+                this.props.handleUpdateData(textareaAndbutton);
             }
                     
             handleTextareaChange(e){
@@ -301,11 +309,12 @@
                 this.setState({
                     textareaAndbutton:textareaAndbutton
                 })
+                this.props.handleUpdateData(textareaAndbutton);
             }
             render() {
                 
                 var textareaAndbutton=this.state.textareaAndbutton;
-                this.props.handleUpdateData(textareaAndbutton);
+                //this.props.handleUpdateData(textareaAndbutton);
                 
                 var  comps  = this.state.comps.slice();
 
