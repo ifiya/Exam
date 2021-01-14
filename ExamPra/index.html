@@ -101,23 +101,16 @@
                     models: [{ id: 0 }],
                     previewOnclick: false,
                     buttonValue:'',
-                    textareaAndbutton:{ bt:3,textareaValue:'1231' ,radioInput:['a','b','c','d']}
+                    textareaAndbutton:{ bt:0,textareaValue:'' ,radioInput:[]}
                 }
             }
             handleUpdateData(textareaAndbutton){
-                /*this.setState({
+                this.setState({
                    textareaAndbutton : textareaAndbutton
-                })*/
-                window.localStorage.setItem("a",textareaAndbutton);
-                var a = window.localStorage.getItem("a");
-                //window._.setStore("a",textareaAndbutton);
-                //var  a =window._.getStore("a");
-                console.log("a.textareaValue"+a.textareaValue);
-                console.log("textareaAndbutton.textareaValue"+textareaAndbutton.textareaValue);
-                console.log("textareaAndbutton.textareaValue"+a.bt);
+                })
+                /*window.localStorage.setItem("a",textareaAndbutton);
+                var a = window.localStorage.getItem("a");*/
             } 
-           
-            //textareaAndbutton:{bt: 0, textareaValue:'',radioInput:['a','b','c','d']},
             handleClick(value) {
                 const previewOnclick=this.state.previewOnclick;
                 switch (value) {
@@ -258,7 +251,7 @@
                 super(props)
                 this.state = {
                     comps: [{ id: 0, selectedClass: false }, { id: 1, selectedClass: false }, { id: 2, selectedClass: false }, { id: 3, selectedClass: false }],
-                    textareaAndbutton:{bt: 0, textareaValue:'',radioInput:['a','b','c','d']},
+                    textareaAndbutton:{bt: 0, textareaValue:'',radioInput:[]},
                     click:0             
                 }
                 this.handleTextareaChange = this.handleTextareaChange.bind(this);
